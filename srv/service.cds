@@ -7,7 +7,7 @@ service LogaliGroup {
     entity ContactsSet         as projection on entities.Contacts;
     entity ReviewsSet          as projection on entities.Reviews;
     entity StockSet            as projection on entities.Stock;
-    entity VH_CategoriesSet    as projection on entities.VH_Categories;
-    entity VH_SubCategoriesSet as projection on entities.VH_SubCategories;
+    entity VH_CategoriesSet    as projection on entities.Categories;
+    entity VH_SubCategoriesSet as projection on entities.SubCategories;
+    entity VH_AvailabilitySet  as projection on entities.Availability;
 };
-

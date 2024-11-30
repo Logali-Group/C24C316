@@ -2,24 +2,28 @@ namespace com.logaligroup;
 
 using {
     cuid,
-    managed
+    managed,
+    sap.common.CodeList
 } from '@sap/cds/common';
 
 entity Products : cuid, managed {
-    product      : String(8);
-    productName  : String;
-    description  : LargeString;
-    category     : Association to VH_Categories; //category_ID       a0648a85-a5fa-48c8-b8cc-7b1c370c2f7d --> category/category
-    subCategory  : Association to VH_SubCategories; //subCategory_ID    c96a5a1a-485d-4e5d-9a96-ce46aa3b0281 --> subCategory/description
-    availability : String;
-    rating       : Decimal(3, 2);
-    price        : Decimal(6, 3);
-    currency     : String(3);
-    details      : Association to Details;
-    toReviews    : Association to many Reviews
-                       on toReviews.product = $self;
-    toStock      : Association to many Stock
-                       on toStock.product = $self;
+    key product      : String(8);
+        productName  : String;
+        productName2 : String;
+        description  : LargeString;
+        category     : Association to Categories; //category_ID       a0648a85-a5fa-48c8-b8cc-7b1c370c2f7d --> category/category
+        subCategory  : Association to SubCategories; //subCategory_ID    c96a5a1a-485d-4e5d-9a96-ce46aa3b0281 --> subCategory/description
+        supplier     : Association to Suppliers; //supplier_ID and supplier_supplier
+        availability : Association to Availability; //availability_code InStock --> availability/name
+        criticality  : Integer;
+        rating       : Decimal(3, 2);
+        price        : Decimal(6, 3);
+        currency     : String(3);
+        details      : Association to Details;
+        toReviews    : Association to many Reviews
+                           on toReviews.product = $self;
+        toStock      : Association to many Stock
+                           on toStock.product = $self;
 };
 
 entity Details : cuid {
@@ -58,7 +62,7 @@ entity Stock : cuid {
     department  : String;
     min         : Decimal(5, 2);
     max         : Decimal(5, 2);
-    value       : Decimal(5, 2);
+    target      : Decimal(5, 2);
     lotSize     : Decimal(6, 3);
     quantity    : Decimal(6, 3);
     unit        : String(2);
@@ -71,15 +75,23 @@ entity Stock : cuid {
  * VH = Value Help
  */
 
-entity VH_Categories : cuid {
+entity Categories : cuid {
     category        : String(40);
     description     : LargeString;
-    toSubCategories : Association to many VH_SubCategories
+    toSubCategories : Association to many SubCategories
                           on toSubCategories.category = $self;
 };
 
-entity VH_SubCategories : cuid {
+entity SubCategories : cuid {
     subCategory : String(40);
     description : LargeString;
-    category    : Association to VH_Categories;
+    category    : Association to Categories; //category_ID
 };
+
+entity Availability : CodeList {
+    key code : String enum {
+            InStock         = 'In Stock';           // 3
+            NotInStock      = 'Not In Stock';       // 1
+            LowAvailability = 'Low Availability';   // 2
+        }
+}
