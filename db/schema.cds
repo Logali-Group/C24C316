@@ -8,6 +8,9 @@ using {
 
 entity Products : cuid, managed {
     key product      : String(8);
+        mediaContent : LargeBinary @UI.IsImage @Core.MediaType: mimeType @Core.ContentDisposition.Filename : fileName;
+        mimeType     : String @Core.IsMediaType;
+        fileName     : String;
         productName  : String;
         productName2 : String;
         description  : LargeString;
@@ -58,7 +61,7 @@ entity Reviews : cuid {
 };
 
 entity Stock : cuid {
-    stockNumber : Int16;
+    stockNumber : String(10);
     department  : String;
     min         : Decimal(5, 2);
     max         : Decimal(5, 2);
@@ -90,8 +93,8 @@ entity SubCategories : cuid {
 
 entity Availability : CodeList {
     key code : String enum {
-            InStock         = 'In Stock';           // 3
-            NotInStock      = 'Not In Stock';       // 1
-            LowAvailability = 'Low Availability';   // 2
+            InStock         = 'In Stock'; // 3
+            NotInStock      = 'Not In Stock'; // 1
+            LowAvailability = 'Low Availability'; // 2
         }
 }

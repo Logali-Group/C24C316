@@ -1,6 +1,11 @@
 using {LogaliGroup as projection} from '../service';
 
 using from './annotations-suppliers';
+using from './annotations-details';
+using from './annotations-reviews';
+using from './annotations-stock';
+
+annotate projection.ProductsSet with @odata.draft.enabled;
 
 annotate projection.ProductsSet with {
     product      @title: 'Product';
@@ -13,6 +18,7 @@ annotate projection.ProductsSet with {
     rating       @title: 'Average Rating';
     price        @title: 'Price per Unit'  @Measures.Unit: currency;
     currency     @title: 'Currency'        @Common.IsUnit;
+    mediaContent @title : 'Image';
 };
 
 annotate projection.ProductsSet with {
@@ -113,6 +119,10 @@ annotate projection.ProductsSet with @(
     },
     UI.LineItem: [
         {
+            $Type : 'UI.DataField',
+            Value : mediaContent,
+        },
+        {
             $Type: 'UI.DataField',
             Value: product
         },
@@ -164,6 +174,89 @@ annotate projection.ProductsSet with @(
         Value : rating,
         Visualization : #Rating
     },
+    UI.FieldGroup #Submit : {
+        $Type : 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type : 'UI.DataField',
+                Value : mediaContent,
+                Label : ''
+            }
+        ]
+    },
+    UI.FieldGroup #GroupA : {
+        $Type : 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type : 'UI.DataField',
+                Value : category_ID
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : subCategory_ID
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : supplier_ID
+            },
+        ],
+    },
+    UI.FieldGroup #GroupB : {
+        $Type : 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type : 'UI.DataField',
+                Value : description,
+                Label : ''
+            }
+        ]
+    },
+    UI.FieldGroup #GroupC : {
+        $Type : 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type : 'UI.DataField',
+                Value : availability_code,
+                Criticality : criticality,
+                Label : ''
+            }
+        ]
+    },
+    UI.FieldGroup #GroudD : {
+        $Type : 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type : 'UI.DataField',
+                Value : price,
+                Label : ''
+            }
+        ]
+    },
+    UI.HeaderFacets  : [
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : '@UI.FieldGroup#Submit',
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : '@UI.FieldGroup#GroupA'
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : '@UI.FieldGroup#GroupB',
+            Label : 'Product Description'
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : '@UI.FieldGroup#GroupC',
+            Label : 'Availability'
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : '@UI.FieldGroup#GroudD',
+            Label : 'Price'
+        },
+    ],
     UI.Facets  : [
         {
             $Type : 'UI.CollectionFacet',
@@ -180,6 +273,21 @@ annotate projection.ProductsSet with @(
                         }
             ],
             Label : 'Supplier Information'
-        }
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : 'details/@UI.FieldGroup',
+            Label : 'Product Information'
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : 'toReviews/@UI.LineItem',
+            Label : 'Reviews'
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            Target : 'toStock/@UI.LineItem',
+            Label : 'Inventory Information'
+        },
     ]
 );

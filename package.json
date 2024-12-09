@@ -22,12 +22,12 @@
             "database": "db.sqlite"
           }
         },
-        "auth":"dummy"
+        "auth": "dummy"
       }
     }
   },
   "scripts": {
-    "start": "cds-serve",
+    "start": "cds watch --profile dev --port 4005",
     "start-dev": "cds-serve --profile dev"
   }
 }
