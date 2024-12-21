@@ -10,14 +10,15 @@ annotate projection.ProductsSet with @odata.draft.enabled;
 annotate projection.ProductsSet with {
     product      @title: 'Product';
     productName  @title: 'Product Name';
-    description  @title: 'Description';
+    description  @title: 'Description' @UI.MultiLineText;
     supplier     @title: 'Supplier';
+    supplier2 @title : 'Supplier';
     category     @title: 'Category';
     subCategory  @title: 'Sub-Category';
     availability @title: 'Availability';
     rating       @title: 'Average Rating';
     price        @title: 'Price per Unit'  @Measures.Unit: currency;
-    currency     @title: 'Currency'        @Common.IsUnit;
+    currency     @title: 'Currency'        @Common.IsUnit @Common.FieldControl : #ReadOnly;
     mediaContent @title : 'Image';
 };
 
@@ -74,6 +75,11 @@ annotate projection.ProductsSet with {
                     ValueListProperty : 'ID'                         //SuppliersSet
                 },
                 {
+                    $Type : 'Common.ValueListParameterOut',
+                    LocalDataProperty : supplier_supplier,
+                    ValueListProperty : 'supplier',
+                },
+                {
                     $Type : 'Common.ValueListParameterDisplayOnly',
                     ValueListProperty : 'supplier'
                 }
@@ -82,12 +88,37 @@ annotate projection.ProductsSet with {
     };
     product @Common: {
         Text : productName2
+    };
+    supplier2 @Common: {
+        Text : supplier2.SupplierName,
+        TextArrangement : #TextOnly,
+        ValueList : {
+            $Type : 'Common.ValueListType',
+            CollectionPath : 'Suppliers',
+            Parameters : [
+                {
+                    $Type : 'Common.ValueListParameterInOut',
+                    LocalDataProperty : supplier2_Supplier,
+                    ValueListProperty : 'ID'
+                }
+            ]
+        }
     }
 };
 
 
 
 annotate projection.ProductsSet with @(
+    Common.SideEffects  : {
+        $Type : 'Common.SideEffectsType',
+        SourceProperties : [
+            supplier_ID
+        ],
+        TargetEntities : [
+            'supplier',
+            'supplier/contact'
+        ],
+    },
     Capabilities.FilterRestrictions : {
         $Type : 'Capabilities.FilterRestrictionsType',
         FilterExpressionRestrictions : [
@@ -198,6 +229,10 @@ annotate projection.ProductsSet with @(
             {
                 $Type : 'UI.DataField',
                 Value : supplier_ID
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : supplier2_Supplier
             },
         ],
     },

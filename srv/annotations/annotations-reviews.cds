@@ -3,10 +3,10 @@ using {LogaliGroup as projection} from '../service';
 annotate projection.ReviewsSet with {
     creationDate @title: 'Creation Date' @Common: {
         Text : user
-    };
-    user         @title: 'User';
+    } @Common.FieldControl: #ReadOnly;
+    user         @title: 'User' @Common.FieldControl: #ReadOnly;
     rating       @title: 'Rating';
-    reviewText   @title: 'Review Text';
+    reviewText   @title: 'Review Text' @UI.MultiLineText;
 };
 
 

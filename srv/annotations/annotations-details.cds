@@ -1,13 +1,13 @@
 using {LogaliGroup as projection} from '../service';
 
 annotate projection.ProductDetailsSet with {
-    baseUnit @title: 'Base Unit';
+    baseUnit @title: 'Base Unit' @Common.FieldControl : #ReadOnly;
     width    @title: 'Width' @Measures.Unit: unitVolume;
     height   @title: 'Height' @Measures.Unit: unitVolume;
     depth    @title: 'Depth' @Measures.Unit: unitVolume;
     weight   @title: 'Wight' @Measures.Unit: unitWeight;
-    unitVolume @Common.IsUnit;
-    unitWeight @Common.IsUnit;
+    unitVolume @Common.IsUnit @Common.FieldControl: #ReadOnly;
+    unitWeight @Common.IsUnit @Common.FieldControl: #ReadOnly;
 };
 
 annotate projection.ProductDetailsSet with @(

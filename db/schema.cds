@@ -6,10 +6,12 @@ using {
     sap.common.CodeList
 } from '@sap/cds/common';
 
+using {API_BUSINESS_PARTNER as cloud} from '../srv/external/API_BUSINESS_PARTNER';
+
 entity Products : cuid, managed {
-    key product      : String(8);
-        mediaContent : LargeBinary @UI.IsImage @Core.MediaType: mimeType @Core.ContentDisposition.Filename : fileName;
-        mimeType     : String @Core.IsMediaType;
+    key product      : String(8) default 'HT-0001';
+        mediaContent : LargeBinary  @UI.IsImage  @Core.MediaType: mimeType  @Core.ContentDisposition.Filename: fileName;
+        mimeType     : String       @Core.IsMediaType;
         fileName     : String;
         productName  : String;
         productName2 : String;
@@ -17,26 +19,27 @@ entity Products : cuid, managed {
         category     : Association to Categories; //category_ID       a0648a85-a5fa-48c8-b8cc-7b1c370c2f7d --> category/category
         subCategory  : Association to SubCategories; //subCategory_ID    c96a5a1a-485d-4e5d-9a96-ce46aa3b0281 --> subCategory/description
         supplier     : Association to Suppliers; //supplier_ID and supplier_supplier
+        supplier2    : Association to cloud.A_Supplier;
         availability : Association to Availability; //availability_code InStock --> availability/name
         criticality  : Integer;
         rating       : Decimal(3, 2);
         price        : Decimal(6, 3);
-        currency     : String(3);
-        details      : Association to Details;
-        toReviews    : Association to many Reviews
+        currency     : String(3) default 'USD';
+        details      : Composition of Details;
+        toReviews    : Composition of many Reviews
                            on toReviews.product = $self;
-        toStock      : Association to many Stock
+        toStock      : Composition of many Stock
                            on toStock.product = $self;
 };
 
 entity Details : cuid {
-    baseUnit   : String(2);
+    baseUnit   : String(2) default 'EA';
     width      : Decimal(6, 3);
     height     : Decimal(6, 3);
     depth      : Decimal(6, 3);
     weight     : Decimal(6, 3);
-    unitVolume : String(2);
-    unitWeight : String(2);
+    unitVolume : String(2) default 'CM';
+    unitWeight : String(2) default 'KG';
 };
 
 entity Suppliers : cuid {
@@ -55,20 +58,20 @@ entity Contacts : cuid {
 entity Reviews : cuid {
     rating       : Decimal(3, 2);
     creationDate : Date;
-    user         : String(20);
+    user         : String(20) @cds.on.insert: $user;
     reviewText   : LargeString;
     product      : Association to Products;
 };
 
 entity Stock : cuid {
-    stockNumber : String(10);
-    department  : String;
+    stockNumber : Integer;
+    department  : Association to Departments; //department_ID
     min         : Decimal(5, 2);
     max         : Decimal(5, 2);
     target      : Decimal(5, 2);
     lotSize     : Decimal(6, 3);
     quantity    : Decimal(6, 3);
-    unit        : String(2);
+    unit        : String(2) default 'EA';
     product     : Association to Products;
 };
 
@@ -97,4 +100,8 @@ entity Availability : CodeList {
             NotInStock      = 'Not In Stock'; // 1
             LowAvailability = 'Low Availability'; // 2
         }
+}
+
+entity Departments : cuid {
+    department : String(40);
 }

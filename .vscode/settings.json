@@ -6,5 +6,6 @@
             "name": "Products",
             "database": "${workspaceFolder:C24C316}/db.sqlite"
         }
-    ]
+    ],
+    "SAP HANA Project Explorer.bind.confirm automatic undeployment": false
 }
